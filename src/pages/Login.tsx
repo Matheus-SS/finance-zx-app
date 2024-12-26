@@ -1,22 +1,25 @@
 import React from "react";
-import { useLocation, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import { authService } from "../service/auth.service";
+import useAuthStore from "../hooks/useAuthStore";
 // Example Login Component
 const LoginPage: React.FC = () => {
-  const [username, setUsername] = React.useState('guinho4@gmail.com');
-  const [password, setPassword] = React.useState('123456');
+  const [username, setUsername] = React.useState("guinho4@gmail.com");
+  const [password, setPassword] = React.useState("123456");
   const navigate = useNavigate();
-  const { key } = useLocation();
-  console.log("FROMMMMMMMMM",  key);
+  const { saveToken } = useAuthStore((state) => state);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await authService.login(username, password);
+      const access_token = await authService.login(username, password);
       // Redirect or handle successful login
-      navigate("/dashboard")
+      saveToken(access_token);
+      navigate("/dashboard");
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       // Handle login error
-      alert('Login failed');
+      alert("Login failed");
     }
   };
 
